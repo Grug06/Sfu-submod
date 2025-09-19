@@ -1,0 +1,742 @@
+﻿###########################
+# French Events
+###########################
+
+add_namespace = france
+
+# Japan demands Indochina
+country_event = {
+	id = france.1
+	title = france.1.t
+	desc = france.1.d
+	picture = GFX_report_event_japan_army_mountainside
+
+	is_triggered_only = yes
+
+	option = { # Accept demands
+		name = france.1.a
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 50
+				has_war = yes
+				any_enemy_country = {
+					strength_ratio = {
+						tag = ROOT
+						ratio < 0.4
+					}
+				}
+			}
+			modifier = {
+				factor = 75
+				16 = { NOT = { is_controlled_by = FRA } } #Paris
+			}
+		}
+		JAP = {
+			country_event = { days = 5 id = japan.6 }
+		}
+	}
+}
+
+# France suggests a Union (Britain)
+country_event = {
+	id = france.11
+	title = france.11.t
+	desc = france.11.d
+	picture = GFX_report_event_worried_french #GFX_report_event_degaulle_churchill
+
+	is_triggered_only = yes
+
+	option = { # Refuse Union
+		name = france.11.a
+	}
+}
+
+# Rumours of Armastice
+country_event = {
+	id = france.12
+	title = france.12.t
+	desc = france.12.d
+	picture = GFX_report_event_worried_french
+
+	is_triggered_only = yes
+
+	option = {
+		name = france.12.a
+	}
+}
+
+# Britain refuses Union (France), armastice inevtiable
+country_event = {
+	id = france.13
+	title = france.13.t
+	desc = france.13.d
+	picture = GFX_report_event_german_parade_paris
+	hidden = yes
+	is_triggered_only = yes
+
+	option = {
+		name = france.13.a
+		VIC = { inherit_technology = FRA }
+		FRA = { set_equipment_fraction = 0 }
+		GER = { country_event = { id = france.14 days = 2 } }
+	}
+}
+
+# France wants Armistice (Germany)
+country_event = {
+	id = france.14
+	title = france.14.t
+	desc = france.14.d
+	picture = GFX_report_event_german_parade_paris
+
+	is_triggered_only = yes
+
+	option = { # Agree - Fascism - LaR
+		name = france.14.a
+		ai_chance = {
+			factor = 50
+		}
+		trigger = {
+			has_government = fascism
+		}
+		# Evacuate factories
+		FRA = {
+			every_owned_state = {
+				limit = { is_core_of = FRA }
+				set_variable = { THIS.NEW_CIVS_STATE = industrial_complex_level } # in this case its current civs
+				set_variable = { THIS.NEW_MILS_STATE = arms_factory_level } # in this case its current mils
+				subtract_from_variable = { THIS.NEW_CIVS_STATE = THIS.STARTING_CIVS_STATE }
+				subtract_from_variable = { THIS.NEW_MILS_STATE = THIS.STARTING_MILS_STATE }
+				# log = "[?THIS.NEW_CIVS_STATE]"
+				# log = "[?THIS.NEW_MILS_STATE]"
+			}
+			every_owned_state = {
+				limit = { is_core_of = FRA }
+				remove_building = {
+					type = industrial_complex
+					level = var:THIS.NEW_CIVS_STATE
+				}
+				remove_building = {
+					type = arms_factory
+					level = var:THIS.NEW_MILS_STATE
+				}
+				add_to_variable = { FRA.BUILT_CIVS = THIS.NEW_CIVS_STATE }
+				add_to_variable = { FRA.BUILT_MILS = THIS.NEW_MILS_STATE }
+			}
+			add_offsite_building = {
+				type = industrial_complex
+				level = var:FRA.BUILT_CIVS
+			}
+			add_offsite_building = {
+				type = arms_factory
+				level = var:FRA.BUILT_MILS
+			}
+		}
+		# remove modifier now allowing construction in netherlands
+		every_state = {
+			limit = {
+				has_dynamic_modifier = { modifier = anti_dockyard_construction }
+				NOT = {
+					state = 766
+				}
+			}
+			remove_dynamic_modifier = { modifier = anti_dockyard_construction }
+		}
+		# POW CLEAR
+		set_global_flag = fall_of_france
+		custom_effect_tooltip = france.10.b_tt
+		USA = {
+			375 = {
+				add_resource = {
+					type = aluminium
+					amount = 800
+				}
+			}
+			376 = {
+				add_resource = {
+					type = aluminium
+					amount = 450
+				}
+			}
+			377 = {
+				add_resource = {
+					type = aluminium
+					amount = 350
+				}
+			}
+			378 = {
+				add_resource = {
+					type = aluminium
+					amount = 270
+				}
+			}
+			activate_decision = USA_arsenal_of_democracy_decision
+		}
+		if = {
+			limit = {
+				has_global_flag = NO_ASIA
+			}
+			276 = {
+				add_resource = {
+					type = aluminium
+					amount = 1300
+				}
+			}
+		}
+		SPR = {
+			# COMINTERN
+			send_embargo = SOV
+
+			# ALLIES
+			send_embargo = CAN
+			send_embargo = USA
+			send_embargo = MEX
+			send_embargo = BRA
+			send_embargo = ENG
+			send_embargo = FRA
+			send_embargo = HOL
+			send_embargo = POL
+			send_embargo = RAJ
+			send_embargo = AST
+			send_embargo = NZL
+			send_embargo = SAF
+		}
+		GER = { add_ideas = GER_africa_hp set_technology = { africa_hp = 1 popup = no } }
+		ITA = { add_ideas = GER_africa_hp set_technology = { africa_hp = 1 popup = no } }
+		ROM = { add_ideas = GER_africa_hp set_technology = { africa_hp = 1 popup = no } }
+		HUN = { add_ideas = GER_africa_hp set_technology = { africa_hp = 1 popup = no } }
+		BUL = { add_ideas = GER_africa_hp set_technology = { africa_hp = 1 popup = no } }
+		SPR = { add_ideas = GER_africa_hp set_technology = { africa_hp = 1 popup = no } }
+		VIC = { add_ideas = GER_africa_hp set_technology = { africa_hp = 1 popup = no } }
+		YUG = { add_ideas = GER_africa_hp set_technology = { africa_hp = 1 popup = no } }
+		CAN = { add_ideas = GER_africa_hp set_technology = { africa_hp = 1 popup = no } }
+		SAF = { add_ideas = GER_africa_hp set_technology = { africa_hp = 1 popup = no } }
+		AST = { add_ideas = GER_africa_hp set_technology = { africa_hp = 1 popup = no } }
+		ENG = { add_ideas = GER_africa_hp set_technology = { africa_hp = 1 popup = no } }
+		NZL = { add_ideas = GER_africa_hp set_technology = { africa_hp = 1 popup = no } }
+		MEX = { add_ideas = GER_africa_hp set_technology = { africa_hp = 1 popup = no } }
+		BRA = { add_ideas = GER_africa_hp set_technology = { africa_hp = 1 popup = no } }
+		SPR = { add_ideas = GER_africa_hp set_technology = { africa_hp = 1 popup = no } }
+		RAJ = { add_ideas = GER_africa_hp set_technology = { africa_hp = 1 popup = no } }
+		HOL = { add_ideas = GER_africa_hp set_technology = { africa_hp = 1 popup = no } }
+		# enable ports on francce
+		FRA = { set_technology = { naval_base_construction = 1 popup = no } }
+		VIC = { set_technology = { naval_base_construction = 1 popup = no } }
+
+		GER = {
+			custom_effect_tooltip = "Gets 120,000 French POWs"
+			add_to_variable = { pow_other_sources = 120 }
+		}
+		FRA = {
+			transfer_units_fraction = {
+				target = VEN
+				size = 1
+				stockpile_ratio = 1
+				army_ratio = 1.0
+				navy_ratio = 1.0
+				air_ratio = 1.0
+			}
+		}
+		VIC = { annex_country = { target = FRA transfer_troops = no } }
+		GER = {
+			transfer_state = 28
+			transfer_state = 17
+			transfer_state = 18
+			transfer_state = 27
+			transfer_state = 29
+			transfer_state = 785
+			transfer_state = 16
+			transfer_state = 24
+			transfer_state = 28
+			transfer_state = 15
+			transfer_state = 30
+			transfer_state = 14
+			transfer_state = 23
+			transfer_state = 19
+			transfer_state = 806
+		}
+		FRA = {
+			every_state = {
+				limit = {
+					is_controlled_by = VIC
+					NOT = {
+						state = 713
+					}
+				}
+				FRA = {
+					transfer_state = PREV
+				}
+			}
+		}
+		ENG = { add_to_faction = FRA }
+		GER = {
+			declare_war_on = {
+				target = FRA
+				type = annex_everything
+			}
+		}
+		VEN = {
+			transfer_units_fraction = {
+				target = FRA
+				size = 1
+				stockpile_ratio = 1
+				army_ratio = 1.0
+				navy_ratio = 1.0
+				air_ratio = 1.0
+			}
+		}
+		# POW CLEAR END
+		GER = {
+			set_country_flag = GER_start_turkey_allied_embargo_axis_mission_first_time
+		}
+		FRA = {
+			set_cosmetic_tag = FRA_FREE
+			set_global_flag = GLOBAL_france_capped
+			if = {
+				limit = {
+					capital_scope = {
+						NOT = {
+							state = 16
+							state = 635
+						}
+					}
+					controls_state = 635
+				}
+				set_capital = { state = 635 }
+			}
+		}
+		custom_effect_tooltip = establishing_vichy_tt
+		hidden_effect = {
+			VIC = {
+				set_country_flag = VIC_france_capped
+				transfer_state = 290
+				every_state = { #transfer French colonial empire
+					limit = {
+						is_controlled_by = FRA
+						is_owned_by = FRA
+						OR = {
+							is_on_continent = africa
+							state = 741
+							state = 286
+							state = 670
+							state = 671
+						}
+					}
+					VIC = { transfer_state = PREV }
+				}
+				every_state = {
+					limit = { #set up Vichy continental holdings
+						OR = {
+							state = 735
+							state = 21
+							state = 851
+							state = 32
+							state = 20
+							state = 26
+							state = 22
+							state = 31
+							state = 25
+							state = 33
+							state = 1
+						}
+						CONTROLLER = {
+							OR = {
+								original_tag = FRA
+								has_war_with = FRA
+							}
+							} #failsafe for weird shit (tm)
+					}
+					add_core_of = PREV
+					VIC = { transfer_state = PREV }
+				}
+				every_state = { #set up cores for French cores
+					limit = {
+						is_core_of = FRA
+						NOT = {
+							is_controlled_by = VIC
+						}
+					}
+					add_core_of = PREV
+				}
+				if = {
+					limit = { ITA = { has_war_with = FRA } }
+					every_owned_state = {
+						limit = {
+							OR = {
+								state = 21
+								state = 1
+								state = 735
+								state = 851
+							}
+						}
+						ITA = { transfer_state = PREV }
+					}
+
+					if = {
+						limit = {
+							21 = { is_controlled_by = ITA }
+							851 = { is_controlled_by = ITA }
+							735 = { is_controlled_by = ITA }
+						}
+						ITA = { transfer_state = 32 }
+					}
+
+				}
+				set_rule = {
+					can_join_factions = no
+					can_create_factions = no
+					can_not_declare_war = no
+				}
+				set_capital = { state = 26 }
+				set_politics = {
+					ruling_party = fascism
+					elections_allowed = no
+				}
+				set_popularities = {
+					democratic = 22
+					fascism = 46
+					neutrality = 30
+					communism = 2
+				}
+
+				add_ideas = FRA_occupation_costs_4
+				add_ideas = neutrality_idea
+				add_ideas = neutrality_idea2
+				FRA = {
+					transfer_units_fraction = {
+						target = VIC
+						size = 0.95
+						stockpile_ratio = 0.8
+						army_ratio = 0.8
+						navy_ratio = 0.85
+						air_ratio = 1.0
+					}
+				}
+				if = {
+					limit = { FRA = { has_country_flag = become_vichy } }
+					change_tag_from = FRA
+				}
+			}
+		}
+		random_country = {
+			limit = {
+				tag = VIC
+			}
+			set_country_flag = VIC_vichy_france_confirmed
+			every_unit_leader = {
+				limit = {
+					has_id = 101 #de Gaulle
+				}
+				set_nationality = FRA
+			}
+			every_army_leader = {
+				limit = {
+					NOT = { has_trait = old_guard }
+				}
+				set_nationality = FRA
+			}
+			FRA = {
+				every_unit_leader = {
+					limit = {
+						OR = {
+							has_trait = old_guard
+							has_trait = old_guard_navy
+						}
+						NOT = {
+							has_trait = spotter
+							has_trait = superior_tactician
+							has_trait = army_logistics_1
+							has_trait = army_chief_defensive_2
+							has_trait = army_chief_maneuver_1
+							has_trait = army_chief_offensive_2
+						}
+					}
+					set_nationality = PREV.PREV
+				}
+			}
+		}
+		FRA = {
+			set_variable = { FRA_french_economy_consumer_goods_expected_value = 0 }
+			set_variable = { FRA_french_economy_production_speed_buildings_factor = 0 }
+			set_variable = { FRA_french_economy_industrial_capacity_factory = 0 }
+			set_variable = { FRA_french_economy_industrial_capacity_dockyard = 0 }
+			set_variable = { FRA_french_economy_lend_lease_tension = 0 }
+			set_variable = { FRA_french_economy_conversion_cost_civ_to_mil_factor = 0 }
+			set_variable = { FRA_french_economy_conversion_cost_mil_to_civ_factor = 0 }
+			set_variable = { FRA_french_economy_stability_factor = 0 }
+			set_variable = { FRA_french_economy_global_building_slots_factor = 0 }
+			set_variable = { FRA_french_economy_min_export = 0 }
+			set_variable = { FRA_french_economy_economy_cost_factor = 0 }
+			set_variable = { FRA_french_economy_production_factory_start_efficiency_factor = 0 }
+			set_variable = { FRA_french_economy_production_speed_industrial_complex_factor = 0 }
+			set_variable = { FRA_french_economy_production_speed_arms_factory_factor = 0 }
+			set_variable = { FRA_french_economy_production_speed_infrastructure_factor = 0 }
+			set_variable = { FRA_french_economy_stability_weekly = 0 }
+			set_variable = { FRA_french_economy_research_speed_factor = 0 }
+			set_variable = { FRA_french_economy_conscription_factor = 0 }
+			set_variable = { FRA_french_economy_production_factory_efficiency_gain_factor = 0 }
+			set_variable = { FRA_french_economy_production_factory_max_efficiency_factor = 0 }
+			set_variable = { FRA_french_economy_required_garrison_factor = 0 }
+			set_variable = { FRA_french_economy_compliance_growth = 0 }
+			FRA_transfer_central_africa_effect = yes  #central africa switches sides
+			FRA_transfer_western_africa_effect = yes #western africa switches sides
+			every_owned_state = {
+				limit = {
+					is_controlled_by = ROOT
+					OR = {
+						state = 557
+						state = 272
+						state = 556
+						state = 780
+						state = 779
+						state = 778
+						state = 781
+						state = 776
+						state = 899
+						state = 898
+					}
+				}
+				add_compliance = 5
+			}
+			transfer_state = 543 #madagascar switches sides
+			543 = {
+				add_compliance = 5
+			}
+			transfer_state = 706 #french island
+			transfer_state = 708 #french island
+			transfer_state = 268 #french somaliland
+			transfer_state = 713 #vichy island
+			set_victory_points = {
+				province = 373
+				value = 50
+			}
+			set_capital =  { state = 539 }
+			FRA = { set_equipment_fraction = 0 }
+			FRA = { country_event = { id = france.187 days = 7 } }
+			GER = { country_event = { id = france.15 days = 7 } }
+			diplomatic_relation = {
+				country = PER
+				relation = military_access
+				active = yes
+			}
+			activate_decision = war_bonds
+		}
+	}
+}
+
+country_event = {
+	id = france.187
+	title = france.187.t
+	desc = france.187.d
+	picture = GFX_report_event_german_parade_paris
+	fire_only_once = yes
+	is_triggered_only = yes
+	hidden = yes
+	option = {
+		FRA = { set_equipment_fraction = 0 }
+	}
+}
+
+country_event = {
+	id = france.15
+	title = france.15.t
+	desc = france.15.d
+	picture = GFX_report_event_german_parade_paris
+	fire_only_once = yes
+	is_triggered_only = yes
+	option = {
+		name = france.15.a
+		GER = {
+			add_equipment_to_stockpile = {
+				type = infantry_equipment_1
+				amount = 40000
+				producer = GER
+			}
+			add_equipment_to_stockpile = {
+				type = support_equipment
+				amount = 1000
+				producer = GER
+			}
+			add_equipment_to_stockpile = {
+				type = artillery_equipment_1
+				amount = 2000
+				producer = GER
+			}
+			add_equipment_to_stockpile = {
+				type = anti_tank_equipment_1
+				amount = 500
+				producer = GER
+			}
+			add_equipment_to_stockpile = {
+				type = anti_air_equipment_1
+				amount = 250
+				producer = GER
+			}
+			add_equipment_to_stockpile = {
+				type = train_equipment_1
+				amount = 100
+				producer = GER
+			}
+			add_equipment_to_stockpile = {
+				type = convoy_1
+				amount = 150
+				producer = GER
+			}
+			add_timed_idea = {
+				idea = GER_seized_french_machine_tooling
+				days = 30
+			}
+		}
+	}
+}
+
+#Capital captured by non french faction
+country_event = {
+	id = france.16
+	title = france.16.t
+	desc = france.16.d
+	picture = GFX_report_event_french_resistance_02
+
+	fire_only_once = yes
+
+	trigger = {
+		original_tag = FRA
+		16 = { controller = { NOT = { original_tag = FRA } } }
+		# has_capitulated = yes
+		VIC = {
+			has_country_flag = VIC_france_capped
+		}
+		#16 = { is_owned_by = FRA }
+	}
+
+	mean_time_to_happen = {
+		days = 4
+	}
+
+	option = {
+		name = france.16.a
+		remove_ideas = FRA_protected_by_the_maginot_line
+	}
+}
+
+# De Gaulle becomes leader
+country_event = {
+	id = france.20
+	title = france.20.t
+	desc = france.20.d
+	picture = GFX_report_event_degaulle_churchill
+
+	is_triggered_only = yes
+
+	option = {
+		custom_effect_tooltip = france.20.a_tt
+		set_country_flag = france_de_gaulle
+		retire_country_leader = yes
+		create_country_leader = {
+			name = "Charles de Gaulle"
+			desc = "POLITICS_CHARLES_DE_GAULLE_DESC"
+			picture = "Portrait_France_Charles_De_Gaulle.dds"
+			expire = "1965.1.1"
+			ideology = conservatism
+			traits = {
+				hero_of_the_french_resistance
+			}
+		}
+		name = france.20.a
+	}
+}
+
+# French strikes
+country_event = {
+	id = france.22
+	title = france.22.t
+	desc = france.22.d
+	picture = GFX_report_event_worker_protests
+
+	is_triggered_only = yes
+
+	option = {
+		name = france.22.a
+		add_ideas = FRA_general_strike
+	}
+}
+
+# The negotiations begin
+country_event = {
+	id = france.23
+	title = france.23.t
+	desc = france.23.d
+	picture = GFX_report_event_airplane_factory
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	option = {
+		name = france.23.a
+		add_stability = 0.1
+		remove_ideas = FRA_general_strike
+	}
+}
+
+# Military called in to clear the factories
+country_event = {
+	id = france.24
+	title = france.24.t
+	desc = france.24.d
+	picture = GFX_report_event_airplane_factory
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	option = {
+		name = france.24.a
+		add_stability = -0.1
+		remove_ideas = FRA_general_strike
+	}
+}
+
+# NEW FRENCH TREE
+
+country_event = {
+	id = france.501
+	title = france.501.t
+	desc = france.501.d
+
+	is_triggered_only = yes
+
+	option = {
+		name = france.501.a
+		if = {
+			limit = {
+				NOT = {
+					has_global_flag = GLOBAL_france_capped
+				}
+			}
+			add_ideas = FRA_charles_huntzigers_folly
+		}
+	}
+}
+
+country_event = {
+	id = france.502
+	title = france.502.t
+	desc = france.502.d
+
+	is_triggered_only = yes
+	hidden = yes
+
+	option = {
+		name = france.502.a
+		if = {
+			limit = {
+				tag = FRA
+			}
+			FRA = {
+				set_country_flag = FRA_1936_election
+			}
+		}
+	}
+}
